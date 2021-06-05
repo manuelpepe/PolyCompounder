@@ -10,5 +10,13 @@ def amountToPZAP(amount: int) -> str:
     return f"{amount / UNIT_MULTIPLIER:.8f}"
 
 
+def amountToWBTC(amount: int) -> str:
+    return f"{amount / 100000000:.8f}"
+
+
+def amountToLPs(amount: int) -> str:
+    return f"{amount / UNIT_MULTIPLIER:.18f}"
+
+
 def PZAPToAmount(pzap: str) -> int:
     return int(float(pzap) * UNIT_MULTIPLIER)

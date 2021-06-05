@@ -27,7 +27,7 @@ def get_w3_connection(rpc):
 def load_wallet(w3: Web3):
     with open(KEYFILE) as fp:
         wallet_pass = getpass.getpass("Enter wallet password: ")
-        wallet = w3.eth.account.decrypt(fp.read(), wallet_pass)
+        return w3.eth.account.decrypt(fp.read(), wallet_pass)
 
 
 class Compounder:
