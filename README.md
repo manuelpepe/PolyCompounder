@@ -3,6 +3,13 @@
 Pool Auto Compounder for the Polygon (MATIC) network.
 Currently works for PZAP only.
 
+## DISCLAIMER
+
+This is a side-project, for personal use and learning purposes, and it may fall unmainteined in the future.
+Even now I cannot assure completely correct handling of your tokens.
+Don't use this with money you're afraid to lose. Maybe don't use it at all.
+Read the code, use at your own discretion and always DYOR.
+
 ## Installation
 
 Clone the repo and install dependencies.
