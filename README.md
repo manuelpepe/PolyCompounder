@@ -18,11 +18,11 @@ Read the code, use at your own discretion and always DYOR.
 Clone the repo and install dependencies.
 
 ```bash
-	$ git clone https://github.com/manuelpepe/PolyAutoCompounder
-	$ cd PolyAutoCompounder
- 	$ python3.7 -m venv venv
-	$ source venv/bin/activate
-	$ pip install -r requirements.txt
+$ git clone https://github.com/manuelpepe/PolyAutoCompounder
+$ cd PolyAutoCompounder
+$ python3.7 -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
 ```
 
 ## Configuration
@@ -32,8 +32,8 @@ Clone the repo and install dependencies.
 Copy and edit the project config:
 
 ```bash
-	$ cp PolyCompounder/resources/config.sample.json PolyCompounder/resources/config.json
-	$ vim PolyCompounder/resources/config.json
+$ cp PolyCompounder/resources/config.sample.json PolyCompounder/resources/config.json
+$ vim PolyCompounder/resources/config.json
 ```
 
 You'll also need to create the file `PolyCompounder/resources/key.file` with your encrypted private key.
@@ -49,9 +49,18 @@ WIP
 
 ## Running
 
+
 ```bash
-	$ python PolyCompounder/core.py
-	Enter wallet password: 
+$ python PolyCompounder/cli.py -h
+usage: PolyCompounder [-h] [-k KEYFILE]
+
+Pool Auto Compounder for the Polygon (MATIC) network.
+Currently works for PZAP only.
+
+optional arguments:
+-h, --help            show this help message and exit
+-k KEYFILE, --keyfile KEYFILE
+						Wallet Encrypted Private Key. If not used will load from resources/key.file as default.
 ```
 
 ## Example

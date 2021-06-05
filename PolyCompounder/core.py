@@ -1,21 +1,13 @@
 import getpass
 
-from typing import List
-from pathlib import Path
+from typing import List, Optional
+from os.path import isfile
 
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from utils import *
-from task import *
-from config import ENDPOINT, MY_ADDRESS
-from contract import ContractManager
-from exceptions import *
-
-
-_PARENT = Path(__file__).parent / "resources"
-KEYFILE = _PARENT / "key.file"
-POOL_ID = 11
+from config import DEFAULT_KEYFILE
+from exceptions import CompoundError
 
 
 def get_w3_connection(rpc):
@@ -24,8 +16,12 @@ def get_w3_connection(rpc):
     return w3
 
 
-def load_wallet(w3: Web3):
-    with open(KEYFILE) as fp:
+def load_wallet(w3: Web3, keyfile: Optional[str]):
+    if keyfile is None:
+        keyfile = DEFAULT_KEYFILE
+    if not isfile(keyfile):
+        raise Exception(f"Keyfile at '{keyfile}' not found.")
+    with open(keyfile) as fp:
         wallet_pass = getpass.getpass("Enter wallet password: ")
         return w3.eth.account.decrypt(fp.read(), wallet_pass)
 
@@ -42,16 +38,3 @@ class Compounder:
                 task.compound()
             except CompoundError as e:
                 print(e)
-
-
-def main():
-    w3 = get_w3_connection(ENDPOINT)
-    wallet = load_wallet(w3)
-    manager = ContractManager(w3, _PARENT)
-    pair = PZAPCompoundTask(w3, manager, MY_ADDRESS, POOL_ID, wallet)
-    pounder = Compounder(manager, [pair])
-    pounder.run()
-
-
-if __name__ == "__main__":
-    main()

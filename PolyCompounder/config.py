@@ -1,7 +1,9 @@
 import json
 from pathlib import Path
 
-CONFIG_FILE = Path(__file__).parent / "resources/config.json" 
+RESOURCES = Path(__file__).parent / "resources"
+CONFIG_FILE = RESOURCES / "config.json" 
+DEFAULT_KEYFILE = RESOURCES / "key.file"
 
 with CONFIG_FILE.open("r") as fp:
     cfg = json.load(fp) 
