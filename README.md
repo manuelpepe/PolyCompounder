@@ -54,6 +54,32 @@ WIP
 	Enter wallet password: 
 ```
 
+## Example
+
+Successful compound: 
+
+```
+$ python PolyCompounder/core.py 
+Enter wallet password: 
+
+Compounding PZAP-WBTC
+Pending rewards: 0.41093465
+* Harvesting...
+Block Hash: ***REMOVED***
+Gas Used: 134873
+* Swapping 0.20651803 PZAP for 0.00000998 WBTC...
+Block Hash: ***REMOVED***
+Gas Used: 118255
+* Adding liquidity (0.20445285 PZAP + 0.00000991 WBTC)...
+Block Hash: ***REMOVED***
+Gas Used: 171761
+* Staking 0.000000014057571878 LPs to PZAP-WBTC...
+Block Hash: ***REMOVED***
+Gas Used: 139469
+
+Done
+```
+
 ## Extending
 
 ### Adding extra PZAP pairs
@@ -66,3 +92,4 @@ The easiest pairs to add are PZAP pairs.
 
 In the future you should be able to add the abu file, configure the manager with a json file
 and configure pairs to compond in a different json file. 
+
