@@ -11,8 +11,8 @@ from hexbytes import HexBytes
 from utils import *
 
 
-ENDPOINT = "https://rpc-mainnet.maticvigil.com/v1/***REMOVED***"
-MY_ADDRESS = "***REMOVED***"
+ENDPOINT = "https://rpc-mainnet.maticvigil.com/v1/APIKEY"
+MY_ADDRESS = "0xADDRESS"
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 _PARENT = Path(__file__).parent
 KEYFILE = _PARENT / "key.file"

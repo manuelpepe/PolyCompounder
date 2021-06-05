@@ -11,9 +11,8 @@ from web3.contract import Contract
 from utils import *
 
 
-***REMOVED***
-ENDPOINT = "https://rpc-mainnet.maticvigil.com/v1/***REMOVED***"
-MY_ADDRESS = "***REMOVED***"
+ENDPOINT = "https://rpc-mainnet.maticvigil.com/v1/APIKEY"
+MY_ADDRESS = "0xADDRESS"
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -51,8 +50,6 @@ CONTRACTS = {
 }
 
 
-
-
 def read_contract(address: str, abifile: str):
     if not all((address, abifile)):
         raise ValueError("Need both address and abifile to read contract.")
@@ -85,18 +82,11 @@ with log_task("Reading contracts"):
     pzap = read_contract(**CONTRACTS["PZAP"])
     pair = read_contract(**CONTRACTS["PAIR"])
 
-# TODO: Test:
-#   pair.functions.balanceOf(MY_ADDRESS).call()
-# to see if not staked LP shows here.
-breakpoint()
-exit(1)
 
 with log_task("Opening wallet"):
     with open(KEYFILE) as fp:
         wallet_pass = getpass.getpass("Enter wallet password: ")
         wallet = w3.eth.account.decrypt(fp.read(), wallet_pass)
-breakpoint()
-exit(1)
 
 
 with log_task("Getting pool data"):
