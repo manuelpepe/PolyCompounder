@@ -20,7 +20,7 @@ Clone the repo and install dependencies.
 ```bash
 $ git clone https://github.com/manuelpepe/PolyAutoCompounder
 $ cd PolyAutoCompounder
-$ python3.7 -m venv venv
+$ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
@@ -74,16 +74,16 @@ Enter wallet password:
 Compounding PZAP-WBTC
 Pending rewards: 0.41093465
 * Harvesting...
-Block Hash: ***REMOVED***
+Block Hash: 0x5523b2a4328426daa14dbf30db07398fb846450s7d9aac21295328edf7a491f3e
 Gas Used: 134873
 * Swapping 0.20651803 PZAP for 0.00000998 WBTC...
-Block Hash: ***REMOVED***
+Block Hash: 0x71cfd9a4002ae75f9d9515233s6334d14a1c223613abe53dea6dd33ff7df3d16
 Gas Used: 118255
 * Adding liquidity (0.20445285 PZAP + 0.00000991 WBTC)...
-Block Hash: ***REMOVED***
+Block Hash: 0x31efebve826aad1ea192ac313f3aba45027158dda1640da0b9362f0beabd25548
 Gas Used: 171761
 * Staking 0.000000014057571878 LPs to PZAP-WBTC...
-Block Hash: ***REMOVED***
+Block Hash: 0x35506c71a44972a45a6c0732c6a6cb0a44887b23d017a27957a21d17b1222fa7
 Gas Used: 139469
 
 Done
