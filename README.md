@@ -42,6 +42,9 @@ To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting
 
 (TODO: `create-keyfile` script)
 
+When starting the compounder will try to read the password for the private key from the `POLYCOMP_KEY` envvar.
+If it's not set it will prompt you for the password.
+
 
 ### Configure manager and compound tasks (WIP)
 

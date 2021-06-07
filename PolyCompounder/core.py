@@ -1,3 +1,4 @@
+import os
 import getpass
 
 from typing import List, Optional
@@ -22,7 +23,9 @@ def load_wallet(w3: Web3, keyfile: Optional[str]):
     if not isfile(keyfile):
         raise Exception(f"Keyfile at '{keyfile}' not found.")
     with open(keyfile) as fp:
-        wallet_pass = getpass.getpass("Enter wallet password: ")
+        wallet_pass = os.environ.get("POLYCOMP_KEY")
+        if not wallet_pass:
+            wallet_pass = getpass.getpass("Enter wallet password: ")
         return w3.eth.account.decrypt(fp.read(), wallet_pass)
 
 
