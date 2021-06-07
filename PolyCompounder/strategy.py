@@ -1,63 +1,44 @@
 from datetime import datetime, timedelta
 
-from web3 import Web3
-from hexbytes import HexBytes
-
-from contract import ContractManager
-from utils import *
+from blockchain import Blockchain
 from exceptions import HarvestNotAvailable, NoLiquidity
 from config import DATETIME_FORMAT
+from utils import *
+
 
 __all__ = [
-    "CompoundTask",
-    "PZAPCompoundTask"
+    "CompoundStrategy",
+    "PZAPCompoundStrategy"
 ]
 
 
-class CompoundTask:
-    """ Base class for compound tasks """
+class CompoundStrategy:
+    """ Base class for compound strategies """
     pass
 
 
-class PZAPCompoundTask(CompoundTask):
+class PZAPCompoundStrategy(CompoundStrategy):
     NAME = "PZAP-WBTC"
     SWAP_PATH = ["PZAP", "WBTC"]
     PAIR = "PAIR"
     MASTERCHEF = "MASTERCHEF"
     ROUTER = "ROUTER"
 
-    def __init__(self, w3: Web3, manager: ContractManager, owner: str, pool_id: int, private_key: HexBytes):
-        self.w3 = w3
-        self.manager = manager
-        self.owner = owner
+    def __init__(self, blockchain: Blockchain, pool_id: int):
+        self.blockchain = blockchain
+        self.owner = blockchain.owner
         self.pool_id = pool_id
-        self.private_key = private_key
-        self.masterchef = manager.read_contract(self.MASTERCHEF)
-        self.router = manager.read_contract(self.ROUTER)
-        self.tokenA = manager.read_contract(self.SWAP_PATH[0])
-        self.tokenB = manager.read_contract(self.SWAP_PATH[1])
-        self.pair = manager.read_contract(self.PAIR)
+        self.masterchef = blockchain.read_contract(self.MASTERCHEF)
+        self.router = blockchain.read_contract(self.ROUTER)
+        self.tokenA = blockchain.read_contract(self.SWAP_PATH[0])
+        self.tokenB = blockchain.read_contract(self.SWAP_PATH[1])
+        self.pair = blockchain.read_contract(self.PAIR)
 
     def _get_swap_path(self):
         return [self.tokenA.address, self.tokenB.address]
 
-    def _trans_details(self):
-        return {
-            "chainId" : 137,
-            "gas" : 239185,
-            "gasPrice" : self.w3.toWei('1', 'gwei'),
-            "nonce" : self.w3.eth.getTransactionCount(self.owner),
-        }
-
     def _transact(self, func: callable, args: tuple):
-        """ Submits transaction and prints hash """
-        txn = func(*args).buildTransaction(self._trans_details())
-        stxn = self.w3.eth.account.sign_transaction(txn, private_key=self.private_key)
-        sent = self.w3.eth.send_raw_transaction(stxn.rawTransaction)
-        rcpt = self.w3.eth.wait_for_transaction_receipt(sent) 
-        print(f"Block Hash: {rcpt.blockHash.hex()}")
-        print(f"Gas Used: {rcpt.gasUsed}")
-        return sent, rcpt
+        return self.blockchain.transact(func, args)
 
     def compound(self):
         """ Runs complete compound process """
@@ -74,12 +55,13 @@ class PZAPCompoundTask(CompoundTask):
         print(f"Pending rewards: {amountToPZAP(pending_amount)}")
     
     def harvest(self):
-        if not self._is_harvest_available():
+        if False and not self._is_harvest_available():
             remaining = self.masterchef.functions.getHarvestUntil(self.pool_id, self.owner).call()
             dt = datetime.fromtimestamp(remaining)
             raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}")
         print("* Harvesting...")
         self._transact(self.masterchef.functions.deposit, (self.pool_id, 0))
+        breakpoint()
         
     def _is_harvest_available(self):
         return self.masterchef.functions.canHarvest(self.pool_id, self.owner).call()
@@ -97,17 +79,23 @@ class PZAPCompoundTask(CompoundTask):
         )
 
     def add_liquidity(self):
-        amountADesired = amountAMin = self.tokenA.functions.balanceOf(self.owner).call()
-        amountBDesired = amountBMin = self.router.functions.getAmountsOut(amountADesired, self._get_swap_path()).call()[1]
+        amountADesired = self.tokenA.functions.balanceOf(self.owner).call()
+        amountAMin = int(amountADesired * 0.95)
+        amountBDesired = self.router.functions.getAmountsOut(amountADesired, self._get_swap_path()).call()[1]
+        amountBMin = int(amountBDesired * 0.95)
         deadline = (datetime.now() + timedelta(minutes=5)).timestamp()
         print(f"* Adding liquidity ({amountToPZAP(amountADesired)} PZAP + {amountToWBTC(amountBDesired)} WBTC)...")
+        input()
         self._transact(
             self.router.functions.addLiquidity, 
-            (self.tokenA.address, self.tokenB.address, amountADesired, amountAMin, amountBDesired, amountBMin, self.owner, int(deadline))
+            (self.tokenA.address, self.tokenB.address, amountADesired, amountBDesired, amountAMin, amountBMin, self.owner, int(deadline))
         )
 
     def stake_liquidity(self):
         lps_to_stake = self.pair.functions.balanceOf(self.owner).call()
+        if lps_to_stake < 0:
+            raise NoLiquidity("No LPs to stake")
         print(f"* Staking {amountToLPs(lps_to_stake)} LPs to {self.NAME}...")
+        input()
         self._transact(self.masterchef.functions.deposit, (self.pool_id, lps_to_stake))
         

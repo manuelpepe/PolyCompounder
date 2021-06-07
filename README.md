@@ -38,20 +38,14 @@ $ vim PolyCompounder/resources/config.json
 
 You'll also need to create the file `PolyCompounder/resources/key.file` with your encrypted private key.
 
-To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py)
+To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py) (TODO: `create-keyfile` script)
 
-(TODO: `create-keyfile` script)
-
-
-### Configure manager and compound tasks (WIP)
-
-WIP
 
 ## Running
 
 
 ```bash
-$ python PolyCompounder/cli.py -h
+(venv) $ python PolyCompounder/cli.py -h
 usage: PolyCompounder [-h] [-k KEYFILE]
 
 Pool Auto Compounder for the Polygon (MATIC) network.
@@ -89,6 +83,18 @@ Gas Used: 139469
 Done
 ```
 
+## Developing
+
+The project structure is as follows:
+
+![PolyCompounder entities structure](docs/entities.png)
+
+The `Blockchain` exposes the auth, transaction and contract interfaces, allowing strategies to interact with the
+network and compound pools (or anything else).
+
+You can inherit `Strategy` to create your own compounding strategies.
+
+
 ## Extending
 
 ### Adding extra PZAP pairs
@@ -101,4 +107,3 @@ The easiest pairs to add are PZAP pairs.
 
 In the future you should be able to add the abu file, configure the manager with a json file
 and configure pairs to compond in a different json file. 
-

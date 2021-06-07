@@ -2,6 +2,7 @@ from pathlib import Path
 
 from web3 import Web3
 
+from config import RESOURCES
 
 class ContractManager:
     """
@@ -32,7 +33,7 @@ class ContractManager:
         }
     }
 
-    def __init__(self, w3: Web3, parent: Path):
+    def __init__(self, w3: Web3, parent: Path = RESOURCES):
         self.w3 = w3
         self.parent = parent
 
