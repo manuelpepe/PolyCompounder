@@ -40,6 +40,9 @@ You'll also need to create the file `PolyCompounder/resources/key.file` with you
 
 To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py) (TODO: `create-keyfile` script)
 
+### Defining strategies
+
+You can modify the `resorces/strategies.json` file to customize strategies. 
 
 ## Running
 

@@ -1,12 +1,17 @@
+import json
+
 from datetime import datetime, timedelta
+from pathlib import Path
+from typing import List
 
 from blockchain import Blockchain
-from exceptions import HarvestNotAvailable, NoLiquidity
+from exceptions import HarvestNotAvailable, NoLiquidity, UnkownStrategyError
 from config import DATETIME_FORMAT
 from utils import *
 
 
 __all__ = [
+    "StrategyLoader",
     "CompoundStrategy",
     "PZAPCompoundStrategy"
 ]
@@ -14,25 +19,23 @@ __all__ = [
 
 class CompoundStrategy:
     """ Base class for compound strategies """
-    pass
-
-
-class PZAPCompoundStrategy(CompoundStrategy):
-    NAME = "PZAP-WBTC"
-    SWAP_PATH = ["PZAP", "WBTC"]
-    PAIR = "PAIR"
-    MASTERCHEF = "MASTERCHEF"
-    ROUTER = "ROUTER"
-
-    def __init__(self, blockchain: Blockchain, pool_id: int):
+    def __init__(self, blockchain: Blockchain, name: str):
         self.blockchain = blockchain
+        self.name = name
+
+
+class PZAPPoolCompoundStrategy(CompoundStrategy):
+    """ Compound strategy for PZAP Pools """
+
+    def __init__(self, blockchain: Blockchain, name: str, swap_path: List[str], pair: str, masterchef: str, router: str, pool_id: int):
+        super().__init__(blockchain, name)
         self.owner = blockchain.owner
         self.pool_id = pool_id
-        self.masterchef = blockchain.read_contract(self.MASTERCHEF)
-        self.router = blockchain.read_contract(self.ROUTER)
-        self.tokenA = blockchain.read_contract(self.SWAP_PATH[0])
-        self.tokenB = blockchain.read_contract(self.SWAP_PATH[1])
-        self.pair = blockchain.read_contract(self.PAIR)
+        self.masterchef = blockchain.read_contract(masterchef)
+        self.router = blockchain.read_contract(router)
+        self.tokenA = blockchain.read_contract(swap_path[0])
+        self.tokenB = blockchain.read_contract(swap_path[1])
+        self.pair = blockchain.read_contract(pair)
 
     def _get_swap_path(self):
         return [self.tokenA.address, self.tokenB.address]
@@ -42,7 +45,7 @@ class PZAPCompoundStrategy(CompoundStrategy):
 
     def compound(self):
         """ Runs complete compound process """
-        print(f"\nCompounding {self.NAME}")
+        print(f"\nCompounding {self.name}")
         self.print_pending_rewards()
         self.harvest()
         self.swap_half_harvest()
@@ -55,7 +58,7 @@ class PZAPCompoundStrategy(CompoundStrategy):
         print(f"Pending rewards: {amountToPZAP(pending_amount)}")
     
     def harvest(self):
-        if False and not self._is_harvest_available():
+        if not self._is_harvest_available():
             remaining = self.masterchef.functions.getHarvestUntil(self.pool_id, self.owner).call()
             dt = datetime.fromtimestamp(remaining)
             raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}")
@@ -95,7 +98,28 @@ class PZAPCompoundStrategy(CompoundStrategy):
         lps_to_stake = self.pair.functions.balanceOf(self.owner).call()
         if lps_to_stake < 0:
             raise NoLiquidity("No LPs to stake")
-        print(f"* Staking {amountToLPs(lps_to_stake)} LPs to {self.NAME}...")
+        print(f"* Staking {amountToLPs(lps_to_stake)} LPs to {self.name}...")
         input()
         self._transact(self.masterchef.functions.deposit, (self.pool_id, lps_to_stake))
-        
+
+
+class StrategyLoader:
+    def __init__(self, blockchain):
+        self.blockchain = blockchain
+
+    def load_from_file(self, path: Path) -> List["CompoundStrategy"]:
+        with open(path, "r") as fp:
+            return self.load_from_list(json.load(fp))
+    
+    def load_from_list(self, strategies: list) -> List["CompoundStrategy"]:
+        out = []
+        for strat in strategies:
+            strat_class = self.find_strat_by_name(strat["strategy"])
+            out.append(strat_class(self.blockchain, strat["name"], **strat["params"]))
+        return out
+
+    def find_strat_by_name(self, name: str):
+        for class_ in CompoundStrategy.__subclasses__():
+            if class_.__name__ == name:
+                return class_
+        raise UnkownStrategyError(f"Can't find strategy '{name}'")

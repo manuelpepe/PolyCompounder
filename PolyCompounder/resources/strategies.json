@@ -1,0 +1,13 @@
+[
+    {
+        "strategy": "PZAPPoolCompoundStrategy",
+        "name": "PZAP-WBTC",
+        "params": {
+            "swap_path": ["PZAP", "WBTC"],
+            "pair": "PAIR",
+            "masterchef": "MASTERCHEF",
+            "router": "ROUTER",
+            "pool_id": 11
+        }
+    }
+]

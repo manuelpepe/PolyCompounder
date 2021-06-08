@@ -5,10 +5,10 @@ Currently works for PZAP only.
 import time, sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from strategy import PZAPCompoundStrategy
+from strategy import StrategyLoader
 from blockchain import Blockchain
 from core import Compounder
-from config import ENDPOINT, MY_ADDRESS
+from config import ENDPOINT, MY_ADDRESS, RESOURCES
 
 POOL_ID = 11
 
@@ -23,8 +23,9 @@ def main():
     args = parser().parse_args()
     blockchain = Blockchain(ENDPOINT, 137, "POLYGON")
     blockchain.load_wallet(MY_ADDRESS, args.keyfile)
-    pair = PZAPCompoundStrategy(blockchain, POOL_ID)
-    pounder = Compounder([pair])
+    stratloader = StrategyLoader(blockchain)
+    starts = stratloader.load_from_file(RESOURCES / "strategies.json")
+    pounder = Compounder(starts)
     while True:
         pounder.run()
         print()
