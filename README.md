@@ -41,6 +41,10 @@ You'll also need to create the file `PolyCompounder/resources/key.file` with you
 
 To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py) (TODO: `create-keyfile` script)
 
+When starting the compounder will try to read the password for the private key from the `POLYCOMP_KEY` envvar.
+If it's not set it will prompt you for the password.
+
+
 ### Adding extra contracts
 
 To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
