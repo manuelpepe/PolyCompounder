@@ -23,6 +23,9 @@ class CompoundStrategy:
         self.blockchain = blockchain
         self.name = name
 
+    def _transact(self, func: callable, args: tuple):
+        return self.blockchain.transact(func, args)
+
 
 class PZAPPoolCompoundStrategy(CompoundStrategy):
     """ Compound strategy for PZAP Pools """
@@ -39,9 +42,6 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
 
     def _get_swap_path(self):
         return [self.tokenA.address, self.tokenB.address]
-
-    def _transact(self, func: callable, args: tuple):
-        return self.blockchain.transact(func, args)
 
     def compound(self):
         """ Runs complete compound process """
