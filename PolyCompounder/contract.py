@@ -4,7 +4,7 @@ from pathlib import Path
 
 from web3 import Web3
 
-from config import ABIS_DIRECTORY, CONTRACTS_FILE
+from PolyCompounder.config import ABIS_DIRECTORY, CONTRACTS_FILE
 
 class ContractManager:
     """

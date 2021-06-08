@@ -1,7 +1,7 @@
 from typing import List
 
-from exceptions import CompoundError
-from strategy import CompoundStrategy
+from PolyCompounder.exceptions import CompoundError
+from PolyCompounder.strategy import CompoundStrategy
 
 
 class Compounder:

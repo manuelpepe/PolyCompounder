@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List
 
-from blockchain import Blockchain
-from exceptions import HarvestNotAvailable, NoLiquidity, UnkownStrategyError
-from config import DATETIME_FORMAT
-from utils import *
+from PolyCompounder.blockchain import Blockchain
+from PolyCompounder.exceptions import HarvestNotAvailable, NoLiquidity, UnkownStrategyError
+from PolyCompounder.config import DATETIME_FORMAT
+from PolyCompounder.utils import *
 
 
 __all__ = [
@@ -46,8 +46,8 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
     def compound(self):
         """ Runs complete compound process """
         print(f"\nCompounding {self.name}")
-        self.print_pending_rewards()
-        self.harvest()
+        # self.print_pending_rewards()
+        # self.harvest()
         self.swap_half_harvest()
         self.add_liquidity()
         self.stake_liquidity()
@@ -87,7 +87,6 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
         amountBMin = int(amountBDesired * 0.95)
         deadline = (datetime.now() + timedelta(minutes=5)).timestamp()
         print(f"* Adding liquidity ({amountToPZAP(amountADesired)} PZAP + {amountToWBTC(amountBDesired)} WBTC)...")
-        input()
         self._transact(
             self.router.functions.addLiquidity, 
             (self.tokenA.address, self.tokenB.address, amountADesired, amountBDesired, amountAMin, amountBMin, self.owner, int(deadline))
@@ -98,7 +97,6 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
         if lps_to_stake < 0:
             raise NoLiquidity("No LPs to stake")
         print(f"* Staking {amountToLPs(lps_to_stake)} LPs to {self.name}...")
-        input()
         self._transact(self.masterchef.functions.deposit, (self.pool_id, lps_to_stake))
 
 

@@ -7,10 +7,10 @@ import time
 import inspect
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from strategy import StrategyLoader
-from blockchain import Blockchain
-from core import Compounder
-from config import ENDPOINT, MY_ADDRESS, RESOURCES
+from PolyCompounder.strategy import StrategyLoader
+from PolyCompounder.blockchain import Blockchain
+from PolyCompounder.core import Compounder
+from PolyCompounder.config import ENDPOINT, MY_ADDRESS, RESOURCES
 
 
 def print_strats(args):

@@ -23,6 +23,7 @@ $ cd PolyAutoCompounder
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
+$ pip install -e .
 ```
 
 ## Configuration
@@ -67,19 +68,19 @@ Strategies are dictionaries with:
 * `name`: Name, just for logging.
 * `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
 
-Run `PolyCompounder/cli.py list-strategies -v' to see available strategies and parameters.
+Run `polycompound list-strategies -v' to see available strategies and parameters.
 
 
 ## Usage
 
 List available strategies and parameters:
 ```bash
-(venv) $ python PolyCompounder/cli.py list-strategies -v
+(venv) $ polycompound list-strategies -v
 ```
 
 Run compounding:
 ```bash
-(venv) $ python PolyCompounder/cli.py run
+(venv) $ polycompound run
 ```
 
 
