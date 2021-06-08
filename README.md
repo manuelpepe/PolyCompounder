@@ -44,20 +44,14 @@ To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting
 
 You can modify the `resorces/strategies.json` file to customize strategies. 
 
+Run `PolyCompounder/cli.py list-strategies -v' to see available strategies and parameters.
+
+
 ## Running
 
-
 ```bash
-(venv) $ python PolyCompounder/cli.py -h
-usage: PolyCompounder [-h] [-k KEYFILE]
-
-Pool Auto Compounder for the Polygon (MATIC) network.
-Currently works for PZAP only.
-
-optional arguments:
--h, --help            show this help message and exit
--k KEYFILE, --keyfile KEYFILE
-						Wallet Encrypted Private Key. If not used will load from resources/key.file as default.
+(venv) $ python PolyCompounder/cli.py list-strategies -v
+(venv) $ python PolyCompounder/cli.py run
 ```
 
 ## Example
@@ -108,5 +102,4 @@ The easiest pairs to add are PZAP pairs.
 2. Extend `PZAPCompoundTask` and redefine class attributes.
 3. Instanciate new task and pass to `Compounder`. 
 
-In the future you should be able to add the abu file, configure the manager with a json file
-and configure pairs to compond in a different json file. 
+In the future you should be able to add the abi file and configure the available contracts with a json file.

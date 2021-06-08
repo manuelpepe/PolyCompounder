@@ -64,7 +64,6 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
             raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}")
         print("* Harvesting...")
         self._transact(self.masterchef.functions.deposit, (self.pool_id, 0))
-        breakpoint()
         
     def _is_harvest_available(self):
         return self.masterchef.functions.canHarvest(self.pool_id, self.owner).call()
@@ -123,3 +122,7 @@ class StrategyLoader:
             if class_.__name__ == name:
                 return class_
         raise UnkownStrategyError(f"Can't find strategy '{name}'")
+
+    @classmethod
+    def list_strats(cls):
+        return CompoundStrategy.__subclasses__()
