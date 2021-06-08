@@ -40,9 +40,32 @@ You'll also need to create the file `PolyCompounder/resources/key.file` with you
 
 To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py) (TODO: `create-keyfile` script)
 
-### Defining strategies
+### Adding extra contracts
 
-You can modify the `resorces/strategies.json` file to customize strategies. 
+To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
+modify the `resources/contracts.json` file to load it.
+
+For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
+to `resources/contracts.json` the following:
+
+```json
+{
+    ...
+    "MYTOKEN": {
+        "address": "0x12345",
+        "abifile": "mytoken.abi"
+    }
+}
+```
+
+### Adding extra strategies
+
+You can add strategies at `resources/strategies.json`.
+Strategies are dictionaries with:
+
+* `strategy`: Class name of strategy (see `list-strategies`)
+* `name`: Name, just for logging.
+* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
 
 Run `PolyCompounder/cli.py list-strategies -v' to see available strategies and parameters.
 
@@ -96,33 +119,3 @@ The `Blockchain` exposes the auth, transaction and contract interfaces, allowing
 network and compound pools (or anything else).
 
 You can inherit `Strategy` to create your own compounding strategies.
-
-
-## Extending
-
-### Adding extra contracts
-
-To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
-modify the `resources/contracts.json` file to load it.
-
-For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
-to `resources/contracts.json` the following:
-
-```json
-{
-    ...
-    "MYTOKEN": {
-        "address": "0x12345",
-        "abifile": "mytoken.abi"
-    }
-}
-```
-
-### Adding extra strategies
-
-You can add strategies at `resources/strategies.json`.
-Strategies are dictionaries with:
-
-* `strategy`: Class name of strategy (see `list-strategies`)
-* `name`: Name, just for logging.
-* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
