@@ -15,7 +15,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from PolyCompounder.strategy import StrategyLoader
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.core import Compounder
-from PolyCompounder.config import ENDPOINT, MY_ADDRESS, RESOURCES
+from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
 
 
@@ -54,7 +54,7 @@ def run(args):
     blockchain = Blockchain(ENDPOINT, 137, "POLYGON")
     blockchain.load_wallet(MY_ADDRESS, args.keyfile)
     stratloader = StrategyLoader(blockchain)
-    starts = stratloader.load_from_file(RESOURCES / "strategies.json")
+    starts = stratloader.load_from_file(STRATEGIES_FILE)
     pounder = Compounder(starts)
     pounder.run()
 

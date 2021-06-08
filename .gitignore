@@ -6,3 +6,4 @@ venv2/
 *.egg-info/
 *dia~
 .vscode/
+.coverage

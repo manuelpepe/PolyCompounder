@@ -9,6 +9,8 @@ This is a side-project, for personal use and learning purposes, and it may fall 
 
 Even now I cannot assure completely correct handling of your tokens.
 
+I'm not assosiated with any of the farms/pools/blockchains mentioned in the project or any other crypto project.
+
 Don't use this with money you're afraid to lose. Maybe don't use it at all.
 
 Read the code, use at your own discretion and always DYOR.
@@ -126,5 +128,5 @@ Using pytest:
 
 ```bash
 (venv) $ pip install -e requirements-dev.txt
-(venv) $ pytest
+(venv) $ ./tests.sh
 ```
