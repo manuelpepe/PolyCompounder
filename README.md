@@ -39,10 +39,7 @@ $ vim PolyCompounder/resources/config.json
 
 You'll also need to create the file `PolyCompounder/resources/key.file` with your encrypted private key.
 
-To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py) (TODO: `create-keyfile` script)
-
-When starting the compounder will try to read the password for the private key from the `POLYCOMP_KEY` envvar.
-If it's not set it will prompt you for the password.
+To create one see you can use the `polycompound create-keyfile` command.
 
 
 ### Adding extra contracts
@@ -76,6 +73,11 @@ Run `polycompound list-strategies -v' to see available strategies and parameters
 
 
 ## Usage
+
+Run compounding:
+```bash
+(venv) $ polycompound create-keyfile -o keyfile
+```
 
 List available strategies and parameters:
 ```bash

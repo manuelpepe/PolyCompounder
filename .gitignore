@@ -5,3 +5,4 @@ venv/
 venv2/
 *.egg-info/
 *dia~
+.vscode/
