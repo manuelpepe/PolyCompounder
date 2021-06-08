@@ -22,7 +22,7 @@ def print_strats(args):
     for strat in StrategyLoader.list_strats():
         print(f"* {strat.__name__}{':' if args.verbose else ''}")
         if args.verbose:
-            params = inspect.signature(StrategyLoader.list_strats()[0]).parameters
+            params = inspect.signature(strat).parameters
             for name, param in params.items():
                 if name in NOSHOW:
                     continue
