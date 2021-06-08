@@ -1,3 +1,5 @@
+class MissingConfig(Exception): pass
+
 class UnkownStrategyError(Exception): pass
 
 class CompoundError(Exception):
@@ -10,4 +12,3 @@ class HarvestNotAvailable(CompoundError):
         self.next_at = next_at
 
 class NoLiquidity(CompoundError): pass
-

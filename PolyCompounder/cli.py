@@ -18,6 +18,7 @@ from PolyCompounder.core import Compounder
 from PolyCompounder.config import ENDPOINT, MY_ADDRESS, RESOURCES
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
 
+
 def _create_keyfile(args):
     private_key = getpass.getpass("Enter private key: ")
     password = getpass.getpass("Enter keyfile password: ")

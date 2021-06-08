@@ -1,6 +1,12 @@
 import pytest
+from PolyCompounder.exceptions import MissingConfig
 
-from PolyCompounder.config import ENDPOINT
+try:
+    from PolyCompounder.config import ENDPOINT
+except MissingConfig as err:
+    print("ERROR: Config not found. Create config with valid rpc to run tests.")
+    raise err
+
 from PolyCompounder.blockchain import Blockchain
 
 
