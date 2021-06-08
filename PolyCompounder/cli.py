@@ -2,7 +2,6 @@
 Pool Auto Compounder for the Polygon (MATIC) network.
 Currently works for PZAP only.
 """
-import sys
 import time
 import inspect
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
@@ -34,11 +33,7 @@ def run(args):
     stratloader = StrategyLoader(blockchain)
     starts = stratloader.load_from_file(RESOURCES / "strategies.json")
     pounder = Compounder(starts)
-    while True:
-        pounder.run()
-        print()
-        sys.stdout.flush()
-        time.sleep(60*10)
+    pounder.run()
 
 
 def parser():

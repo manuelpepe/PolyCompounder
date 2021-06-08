@@ -46,8 +46,8 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
     def compound(self):
         """ Runs complete compound process """
         print(f"\nCompounding {self.name}")
-        # self.print_pending_rewards()
-        # self.harvest()
+        self.print_pending_rewards()
+        self.harvest()
         self.swap_half_harvest()
         self.add_liquidity()
         self.stake_liquidity()
@@ -59,9 +59,9 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
     
     def harvest(self):
         if not self._is_harvest_available():
-            remaining = self.masterchef.functions.getHarvestUntil(self.pool_id, self.owner).call()
-            dt = datetime.fromtimestamp(remaining)
-            raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}")
+            next_at = self.masterchef.functions.getHarvestUntil(self.pool_id, self.owner).call()
+            dt = datetime.fromtimestamp(next_at)
+            raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}", next_at)
         print("* Harvesting...")
         self._transact(self.masterchef.functions.deposit, (self.pool_id, 0))
         
