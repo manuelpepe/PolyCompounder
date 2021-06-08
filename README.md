@@ -47,12 +47,18 @@ You can modify the `resorces/strategies.json` file to customize strategies.
 Run `PolyCompounder/cli.py list-strategies -v' to see available strategies and parameters.
 
 
-## Running
+## Usage
 
+List available strategies and parameters:
 ```bash
 (venv) $ python PolyCompounder/cli.py list-strategies -v
+```
+
+Run compounding:
+```bash
 (venv) $ python PolyCompounder/cli.py run
 ```
+
 
 ## Example
 
@@ -94,12 +100,29 @@ You can inherit `Strategy` to create your own compounding strategies.
 
 ## Extending
 
-### Adding extra PZAP pairs
+### Adding extra contracts
 
-The easiest pairs to add are PZAP pairs.
+To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
+modify the `resources/contracts.json` file to load it.
 
-1. Add the secondary token .abi file into resources and create a new entry for the ContractManager.
-2. Extend `PZAPCompoundTask` and redefine class attributes.
-3. Instanciate new task and pass to `Compounder`. 
+For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
+to `resources/contracts.json` the following:
 
-In the future you should be able to add the abi file and configure the available contracts with a json file.
+```json
+{
+    ...
+    "MYTOKEN": {
+        "address": "0x12345",
+        "abifile": "mytoken.abi"
+    }
+}
+```
+
+### Adding extra strategies
+
+You can add strategies at `resources/strategies.json`.
+Strategies are dictionaries with:
+
+* `strategy`: Class name of strategy (see `list-strategies`)
+* `name`: Name, just for logging.
+* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
