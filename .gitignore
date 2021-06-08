@@ -2,3 +2,4 @@ key.file
 __pycache__
 config.json
 venv/
+venv2/
