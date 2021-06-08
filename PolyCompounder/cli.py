@@ -2,9 +2,13 @@
 Pool Auto Compounder for the Polygon (MATIC) network.
 Currently works for PZAP only.
 """
+import os
+import sys
 import time
 import inspect
+
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from contextlib import contextmanager
 
 from PolyCompounder.strategy import StrategyLoader
 from PolyCompounder.blockchain import Blockchain
@@ -49,11 +53,22 @@ def parser():
     p_run.set_defaults(func=run)
     return p
 
+@contextmanager
+def _catch_ctrlc():
+    try:
+        yield
+    except KeyboardInterrupt:
+        print("Ctrl+C")
+        try:
+            sys.exit(1)
+        except SystemExit:
+            os._exit(1)
 
 def main():
     args = parser().parse_args()
     if hasattr(args, 'func'):
-        args.func(args)
+        with _catch_ctrlc():
+            args.func(args)
     else:
         parser().print_help()
 
