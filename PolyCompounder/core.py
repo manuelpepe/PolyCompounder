@@ -1,43 +1,35 @@
-import os
-import getpass
+import sys
+import time
 
-from typing import List, Optional
-from os.path import isfile
+from typing import List, Union
+from datetime import datetime, timedelta
 
-from web3 import Web3
-from web3.middleware import geth_poa_middleware
-
-from config import DEFAULT_KEYFILE
-from exceptions import CompoundError
-
-
-def get_w3_connection(rpc):
-    w3 = Web3(Web3.HTTPProvider(rpc))
-    w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-    return w3
-
-
-def load_wallet(w3: Web3, keyfile: Optional[str]):
-    if keyfile is None:
-        keyfile = DEFAULT_KEYFILE
-    if not isfile(keyfile):
-        raise Exception(f"Keyfile at '{keyfile}' not found.")
-    with open(keyfile) as fp:
-        wallet_pass = os.environ.get("POLYCOMP_KEY")
-        if not wallet_pass:
-            wallet_pass = getpass.getpass("Enter wallet password: ")
-        return w3.eth.account.decrypt(fp.read(), wallet_pass)
+from PolyCompounder.exceptions import CompoundError, HarvestNotAvailable
+from PolyCompounder.strategy import CompoundStrategy
+from PolyCompounder.config import DATETIME_FORMAT
 
 
 class Compounder:
     """ Compounds a list of Pairs sequentially """
-    def __init__(self, w3: Web3, tasks: List["CompoundTask"]):
-        self.w3 = w3
-        self.tasks = tasks
+    def __init__(self, strategies: List[CompoundStrategy]):
+        self.strategies = strategies
 
     def run(self):
-        for task in self.tasks:
-            try:
-                task.compound()
-            except CompoundError as e:
-                print(e)
+        while True:
+            for task in self.strategies:
+                try:
+                    task.compound()
+                except HarvestNotAvailable as err:
+                    print(err)
+                    self._sleep_until(err.next_at)
+                except CompoundError as e:
+                    print(e)
+                    raise e
+    
+    def _sleep_until(self, timestamp: Union[int, float], offset: int = 10):
+        sleep_in_seconds = timestamp - datetime.now().timestamp() + offset
+        sleep_for = timedelta(seconds=sleep_in_seconds)
+        sleep_end = datetime.now() + sleep_for
+        print(f"Sleeping until {sleep_end.strftime(DATETIME_FORMAT)}\n")
+        sys.stdout.flush()
+        time.sleep(sleep_in_seconds)

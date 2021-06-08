@@ -23,6 +23,7 @@ $ cd PolyAutoCompounder
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
+$ pip install -e .
 ```
 
 ## Configuration
@@ -38,33 +39,54 @@ $ vim PolyCompounder/resources/config.json
 
 You'll also need to create the file `PolyCompounder/resources/key.file` with your encrypted private key.
 
-To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py)
-
-(TODO: `create-keyfile` script)
+To create one see [here](https://web3py.readthedocs.io/en/stable/troubleshooting.html#how-do-i-use-my-metamask-accounts-from-web3-py) (TODO: `create-keyfile` script)
 
 When starting the compounder will try to read the password for the private key from the `POLYCOMP_KEY` envvar.
 If it's not set it will prompt you for the password.
 
 
-### Configure manager and compound tasks (WIP)
+### Adding extra contracts
 
-WIP
+To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
+modify the `resources/contracts.json` file to load it.
 
-## Running
+For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
+to `resources/contracts.json` the following:
 
-
-```bash
-$ python PolyCompounder/cli.py -h
-usage: PolyCompounder [-h] [-k KEYFILE]
-
-Pool Auto Compounder for the Polygon (MATIC) network.
-Currently works for PZAP only.
-
-optional arguments:
--h, --help            show this help message and exit
--k KEYFILE, --keyfile KEYFILE
-						Wallet Encrypted Private Key. If not used will load from resources/key.file as default.
+```json
+{
+    ...
+    "MYTOKEN": {
+        "address": "0x12345",
+        "abifile": "mytoken.abi"
+    }
+}
 ```
+
+### Adding extra strategies
+
+You can add strategies at `resources/strategies.json`.
+Strategies are dictionaries with:
+
+* `strategy`: Class name of strategy (see `list-strategies`)
+* `name`: Name, just for logging.
+* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
+
+Run `polycompound list-strategies -v' to see available strategies and parameters.
+
+
+## Usage
+
+List available strategies and parameters:
+```bash
+(venv) $ polycompound list-strategies -v
+```
+
+Run compounding:
+```bash
+(venv) $ polycompound run
+```
+
 
 ## Example
 
@@ -92,16 +114,15 @@ Gas Used: 139469
 Done
 ```
 
-## Extending
+## Developing
 
-### Adding extra PZAP pairs
+For details see [ARCHITECTURE.md](ARCHITECTURE.md)
 
-The easiest pairs to add are PZAP pairs.
+### Running tests
 
-1. Add the secondary token .abi file into resources and create a new entry for the ContractManager.
-2. Extend `PZAPCompoundTask` and redefine class attributes.
-3. Instanciate new task and pass to `Compounder`. 
+Using pytest:
 
-In the future you should be able to add the abu file, configure the manager with a json file
-and configure pairs to compond in a different json file. 
-
+```bash
+(venv) $ pip install -e requirements-dev.txt
+(venv) $ pytest
+```
