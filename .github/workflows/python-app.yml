@@ -28,7 +28,7 @@ jobs:
         pip install -e .
     - name: Create config
       run: |
-        echo '{"endpoint": "***REMOVED***","myAddress": "***REMOVED***"}' > PolyCompounder/resources/config.json
+        echo '{"endpoint": "'${{secret.TESTS_ENDPOINT}}'","myAddress": "'${{secret.TEST_WALLET}}'"}' > PolyCompounder/resources/config.json
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
