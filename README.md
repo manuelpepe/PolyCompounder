@@ -1,10 +1,12 @@
 # PolyAutoCompounder
 
+
 [![Tests](https://github.com/manuelpepe/PolyCompounder/actions/workflows/python-app.yml/badge.svg)](https://github.com/manuelpepe/PolyCompounder/actions/workflows/python-app.yml) 
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 
 Pool Auto Compounder for the Polygon (MATIC) network.
 Currently works for PZAP only.
+
 
 ## DISCLAIMER
 
@@ -17,6 +19,7 @@ I'm not assosiated with any of the farms/pools/blockchains mentioned in the proj
 Don't use this with money you're afraid to lose. Maybe don't use it at all.
 
 Read the code, use at your own discretion and always DYOR.
+
 
 ## Installation
 
@@ -31,58 +34,19 @@ $ pip install -r requirements.txt
 $ pip install -e .
 ```
 
-## Configuration
-
-### Configure wallet address and RPC 
-
-Copy and edit the project config:
-
-```bash
-$ cp PolyCompounder/resources/config.sample.json PolyCompounder/resources/config.json
-$ vim PolyCompounder/resources/config.json
-```
-
-You'll also need to create the file `PolyCompounder/resources/key.file` with your encrypted private key.
-
-To create one see you can use the `polycompound create-keyfile` command.
-
-
-### Adding extra contracts
-
-To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
-modify the `resources/contracts.json` file to load it.
-
-For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
-to `resources/contracts.json` the following:
-
-```json
-{
-    ...
-    "MYTOKEN": {
-        "address": "0x12345",
-        "abifile": "mytoken.abi"
-    }
-}
-```
-
-### Adding extra strategies
-
-You can add strategies at `resources/strategies.json`.
-Strategies are dictionaries with:
-
-* `strategy`: Class name of strategy (see `list-strategies`)
-* `name`: Name, just for logging.
-* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
-
-Run `polycompound list-strategies -v' to see available strategies and parameters.
-
 
 ## Usage
 
 Run compounding:
 ```bash
-(venv) $ polycompound create-keyfile -o keyfile
+(venv) $ polycompound create-keyfile [-o keyfile]
 ```
+
+Edit config file:
+```bash
+(venv) $ polycompound edit-config
+```
+
 
 List available strategies and parameters:
 ```bash
@@ -100,7 +64,7 @@ Run compounding:
 Successful compound: 
 
 ```
-$ python PolyCompounder/core.py 
+$ polycompound run 
 Enter wallet password: 
 
 Compounding PZAP-WBTC
@@ -120,6 +84,47 @@ Gas Used: 139469
 
 Done
 ```
+
+## Configuration
+
+### Configure wallet and RPC 
+
+Create project config and keyfile:
+
+```bash
+(venv) $ polycompound edit-config
+(venv) $ polycompound create-keyfile
+```
+
+
+### Adding extra contracts
+
+To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
+modify the `resources/contracts.json` file to load it.
+
+For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
+to `resources/contracts.json` the following:
+
+```json
+{
+    "MYTOKEN": {
+        "address": "0x12345",
+        "abifile": "mytoken.abi"
+    }
+}
+```
+
+### Adding extra strategies
+
+You can add strategies at `resources/strategies.json`.
+Strategies are dictionaries with:
+
+* `strategy`: Class name of strategy (see `list-strategies`)
+* `name`: Name, just for logging.
+* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
+
+Run `polycompound list-strategies -v' to see available strategies and parameters.
+
 
 ## Developing
 

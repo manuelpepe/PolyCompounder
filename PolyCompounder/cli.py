@@ -8,6 +8,7 @@ import time
 import inspect
 import getpass
 import logging
+import subprocess
 
 from pathlib import Path
 from contextlib import contextmanager
@@ -16,7 +17,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from PolyCompounder.strategy import StrategyLoader
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.core import Compounder
-from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE, DATETIME_FORMAT
+from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, DEFAULT_KEYFILE
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
 
 
@@ -48,6 +49,16 @@ def _create_keyfile(args, logger):
         logger.error(err)
         sys.exit(1)
     logger.info(f"Keyfile written to '{out}'")
+
+
+def edit_config(args, logger):
+    data = None
+    if not CONFIG_FILE.is_file():
+        with CONFIG_FILE.open("w") as fp:
+            data = SAMPLE_CONFIG_FILE.open("r").read()
+            fp.write(data)
+    editor = os.environ.get("EDITOR", "vim")
+    subprocess.call([editor, CONFIG_FILE])
 
 
 def print_strats(args, logger):
@@ -86,9 +97,12 @@ def parser():
     p_run.add_argument("-k", "--keyfile", action="store", help="Wallet Encrypted Private Key. If not used will load from resources/key.file as default.", default=None)
     p_run.set_defaults(func=run)
 
-    p_run = subparsers.add_parser("create-keyfile", help="Create keyfile for compounder. You'll need your private key and a new password for the keyfile.")
-    p_run.add_argument("-o", "--output", action="store", help="Output location for keyfile.", required=True)
-    p_run.set_defaults(func=_create_keyfile)
+    p_createkf = subparsers.add_parser("create-keyfile", help="Create keyfile for compounder. You'll need your private key and a new password for the keyfile.")
+    p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default=str(DEFAULT_KEYFILE))
+    p_createkf.set_defaults(func=_create_keyfile)
+
+    p_edit = subparsers.add_parser("edit-config", help="Create or edit config file.")
+    p_edit.set_defaults(func=edit_config)
     return p
 
 @contextmanager
