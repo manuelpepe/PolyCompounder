@@ -1,3 +1,5 @@
+import logging
+
 from web3 import Web3
 from hexbytes import HexBytes
 
@@ -7,6 +9,7 @@ class TransactionError(Exception): pass
 
 class TransactionHandler:
     def __init__(self, w3: Web3, chain_id: int, gas: int = 1, owner: str = None, private_key: HexBytes = None):
+        self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
         self.owner = owner
         self.private_key = private_key
@@ -29,6 +32,6 @@ class TransactionHandler:
         stxn = self.w3.eth.account.sign_transaction(txn, private_key=self.private_key)
         sent = self.w3.eth.send_raw_transaction(stxn.rawTransaction)
         rcpt = self.w3.eth.wait_for_transaction_receipt(sent) 
-        print(f"Block Hash: {rcpt.blockHash.hex()}")
-        print(f"Gas Used: {rcpt.gasUsed}")
+        self.logger.info(f"Block Hash: {rcpt.blockHash.hex()}")
+        self.logger.info(f"Gas Used: {rcpt.gasUsed}")
         return sent, rcpt

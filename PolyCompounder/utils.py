@@ -25,7 +25,7 @@ def amountToWBTC(amount: int) -> str:
 
 
 def amountToLPs(amount: int) -> str:
-    return f"{amount / UNIT_MULTIPLIER:.18f}"
+    return f"{amount / UNIT_MULTIPLIER:.25f}"
 
 
 def PZAPToAmount(pzap: str) -> int:

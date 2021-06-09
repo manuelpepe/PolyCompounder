@@ -1,4 +1,6 @@
 import json
+import time
+import logging
 
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -13,18 +15,20 @@ from PolyCompounder.utils import *
 __all__ = [
     "StrategyLoader",
     "CompoundStrategy",
-    "PZAPCompoundStrategy"
+    "PZAPPoolCompoundStrategy"
 ]
 
 
 class CompoundStrategy:
     """ Base class for compound strategies """
     def __init__(self, blockchain: Blockchain, name: str):
+        self.logger = logging.getLogger(self.__class__.__name__)
         self.blockchain = blockchain
         self.name = name
 
     def _transact(self, func: callable, args: tuple):
-        return self.blockchain.transact(func, args)
+        res = self.blockchain.transact(func, args)
+        time.sleep(2)
 
 
 class PZAPPoolCompoundStrategy(CompoundStrategy):
@@ -45,24 +49,24 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
 
     def compound(self):
         """ Runs complete compound process """
-        print(f"\nCompounding {self.name}")
+        self.logger.info(f"Compounding {self.name}")
         self.print_pending_rewards()
         self.harvest()
         self.swap_half_harvest()
         self.add_liquidity()
         self.stake_liquidity()
-        print("Done")
+        self.logger.info("Done")
 
     def print_pending_rewards(self):
         pending_amount = self.masterchef.functions.pendingPZap(self.pool_id, self.owner).call()
-        print(f"Pending rewards: {amountToPZAP(pending_amount)}")
+        self.logger.info(f"Pending rewards: {amountToPZAP(pending_amount)}")
     
     def harvest(self):
         if not self._is_harvest_available():
             next_at = self.masterchef.functions.getHarvestUntil(self.pool_id, self.owner).call()
             dt = datetime.fromtimestamp(next_at)
             raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}", next_at)
-        print("* Harvesting...")
+        self.logger.info("* Harvesting...")
         self._transact(self.masterchef.functions.deposit, (self.pool_id, 0))
         
     def _is_harvest_available(self):
@@ -74,7 +78,7 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
         if amountOutMin <= 0:
             raise NoLiquidity("No liquidity for swap")
         deadline = (datetime.now() + timedelta(minutes=5)).timestamp()
-        print(f"* Swapping {amountToPZAP(amountIn)} PZAP for {amountToWBTC(amountOutMin)} WBTC...")
+        self.logger.info(f"* Swapping {amountToPZAP(amountIn)} PZAP for {amountToWBTC(amountOutMin)} WBTC...")
         self._transact(
             self.router.functions.swapExactTokensForTokens, 
             (amountIn, amountOutMin, self._get_swap_path(), self.owner, int(deadline))
@@ -82,11 +86,11 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
 
     def add_liquidity(self):
         amountADesired = self.tokenA.functions.balanceOf(self.owner).call()
-        amountAMin = int(amountADesired * 0.95)
+        amountAMin = int(amountADesired * 0.92)
         amountBDesired = self.router.functions.getAmountsOut(amountADesired, self._get_swap_path()).call()[1]
-        amountBMin = int(amountBDesired * 0.95)
+        amountBMin = int(amountBDesired * 0.92)
         deadline = (datetime.now() + timedelta(minutes=5)).timestamp()
-        print(f"* Adding liquidity ({amountToPZAP(amountADesired)} PZAP + {amountToWBTC(amountBDesired)} WBTC)...")
+        self.logger.info(f"* Adding liquidity ({amountToPZAP(amountADesired)} PZAP + {amountToWBTC(amountBDesired)} WBTC or at least ({amountToPZAP(amountAMin)} PZAP + {amountToWBTC(amountBMin)} WBTC))...")
         self._transact(
             self.router.functions.addLiquidity, 
             (self.tokenA.address, self.tokenB.address, amountADesired, amountBDesired, amountAMin, amountBMin, self.owner, int(deadline))
@@ -96,7 +100,7 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
         lps_to_stake = self.pair.functions.balanceOf(self.owner).call()
         if lps_to_stake < 0:
             raise NoLiquidity("No LPs to stake")
-        print(f"* Staking {amountToLPs(lps_to_stake)} LPs to {self.name}...")
+        self.logger.info(f"* Staking {amountToLPs(lps_to_stake)} LPs to {self.name}...")
         self._transact(self.masterchef.functions.deposit, (self.pool_id, lps_to_stake))
 
 

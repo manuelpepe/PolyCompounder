@@ -7,6 +7,7 @@ import sys
 import time
 import inspect
 import getpass
+import logging
 
 from pathlib import Path
 from contextlib import contextmanager
@@ -15,42 +16,56 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from PolyCompounder.strategy import StrategyLoader
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.core import Compounder
-from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE
+from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE, DATETIME_FORMAT
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
 
 
-def _create_keyfile(args):
+def _create_logger():
+    fhandler = logging.FileHandler("polycompound.log", "a", "utf-8")
+    fhandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt=DATETIME_FORMAT))
+
+    shandler = logging.StreamHandler(sys.stdout)
+    shandler.setFormatter(logging.Formatter("%(message)s"))
+
+    logger = logging.getLogger()
+    logger.addHandler(shandler)
+    logger.addHandler(fhandler)
+    logger.setLevel(logging.INFO)
+    return logger
+
+
+def _create_keyfile(args, logger):
     private_key = getpass.getpass("Enter private key: ")
     password = getpass.getpass("Enter keyfile password: ")
     pass_repeat = getpass.getpass("Repeat keyfile password: ")
     if password != pass_repeat:
-        print("Passwords don't match")
+        logger.error("Passwords don't match")
         sys.exit(1)
     try:
         out = Path(args.output)
         create_keyfile(out, private_key, pass_repeat)
     except KeyfileOverrideException as err:
-        print(err)
+        logger.error(err)
         sys.exit(1)
-    print(f"Keyfile written to '{out}'")
+    logger.info(f"Keyfile written to '{out}'")
 
 
-def print_strats(args):
+def print_strats(args, logger):
     NOSHOW = ["blockchain", "name"]
-    print("Available strategies:")
+    logger.info("Available strategies:")
     for strat in StrategyLoader.list_strats():
-        print(f"* {strat.__name__}{':' if args.verbose else ''}")
+        logger.info(f"* {strat.__name__}{':' if args.verbose else ''}")
         if args.verbose:
             params = inspect.signature(strat).parameters
             for name, param in params.items():
                 if name in NOSHOW:
                     continue
-                print(f"\t- {param}")
+                logger.info(f"\t- {param}")
     if not args.verbose:
-        print("use -v to see strategy parameters")
+        logger.info("use -v to see strategy parameters")
                 
 
-def run(args):
+def run(args, logger):
     blockchain = Blockchain(ENDPOINT, 137, "POLYGON")
     blockchain.load_wallet(MY_ADDRESS, args.keyfile)
     stratloader = StrategyLoader(blockchain)
@@ -88,10 +103,11 @@ def _catch_ctrlc():
             os._exit(1)
 
 def main():
+    logger = _create_logger()
     args = parser().parse_args()
     if hasattr(args, 'func'):
         with _catch_ctrlc():
-            args.func(args)
+            args.func(args, logger)
     else:
         parser().print_help()
 
