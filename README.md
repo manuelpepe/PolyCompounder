@@ -37,52 +37,11 @@ $ pip install -e .
 
 ## Usage
 
-Run compounding:
 ```bash
-(venv) $ polycompound create-keyfile [-o keyfile]
-```
-
-Edit config file:
-```bash
-(venv) $ polycompound edit-config
-```
-
-
-List available strategies and parameters:
-```bash
-(venv) $ polycompound list-strategies -v
-```
-
-Run compounding:
-```bash
-(venv) $ polycompound run
-```
-
-
-## Example
-
-Successful compound: 
-
-```
-$ polycompound run 
-Enter wallet password: 
-
-Compounding PZAP-WBTC
-Pending rewards: 0.41093465
-* Harvesting...
-Block Hash: 0x5523b2a4328426daa14dbf30db07398fb846450s7d9aac21295328edf7a491f3e
-Gas Used: 134873
-* Swapping 0.20651803 PZAP for 0.00000998 WBTC...
-Block Hash: 0x71cfd9a4002ae75f9d9515233s6334d14a1c223613abe53dea6dd33ff7df3d16
-Gas Used: 118255
-* Adding liquidity (0.20445285 PZAP + 0.00000991 WBTC)...
-Block Hash: 0x31efebve826aad1ea192ac313f3aba45027158dda1640da0b9362f0beabd25548
-Gas Used: 171761
-* Staking 0.000000014057571878 LPs to PZAP-WBTC...
-Block Hash: 0x35506c71a44972a45a6c0732c6a6cb0a44887b23d017a27957a21d17b1222fa7
-Gas Used: 139469
-
-Done
+(venv) $ polycompound create-keyfile [-o keyfile]  # Create keyfile
+(venv) $ polycompound edit-config  # Edit config file
+(venv) $ polycompound list-strategies -v  # List available strategies and parameters
+(venv) $ polycompound run  # Run compounding
 ```
 
 ## Configuration
@@ -116,12 +75,31 @@ to `resources/contracts.json` the following:
 
 ### Adding extra strategies
 
-You can add strategies at `resources/strategies.json`.
+You can add strategies to execute at `resources/strategies.json`.
+For example, the follwing example defines 1 estrategy to execute, using the strategy `PZAPPoolCompoundStrategy` 
+and the contracts `PZAP`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
+
+```json
+[
+    {
+        "strategy": "PZAPPoolCompoundStrategy",
+        "name": "PZAP-WBTC",
+        "params": {
+            "swap_path": ["PZAP", "WBTC"],
+            "pair": "PAIR",
+            "masterchef": "MASTERCHEF",
+            "router": "ROUTER",
+            "pool_id": 11
+        }
+    }
+]
+```
+
 Strategies are dictionaries with:
 
-* `strategy`: Class name of strategy (see `list-strategies`)
+* `strategy`: Class name of strategy (must be subclass of `PolyCompounder.strategy.CompoundStrategy`, see `polycompound list-strategies`)
 * `name`: Name, just for logging.
-* `params`: Dictionary with strategy parameters. (see `list-strategies -v`)
+* `params`: Dictionary with strategy parameters. (see `polycompound list-strategies -v`)
 
 Run `polycompound list-strategies -v' to see available strategies and parameters.
 
