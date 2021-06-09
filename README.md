@@ -27,7 +27,7 @@ Clone the repo and install dependencies.
 
 ```bash
 $ git clone https://github.com/manuelpepe/PolyAutoCompounder
-$ cd PolyAutoCompounder
+$ cd PolyCompounder
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
