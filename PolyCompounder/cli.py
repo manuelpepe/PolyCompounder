@@ -105,6 +105,7 @@ def parser():
     p_edit.set_defaults(func=edit_config)
     return p
 
+
 @contextmanager
 def _catch_ctrlc():
     try:

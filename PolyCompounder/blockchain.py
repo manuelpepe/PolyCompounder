@@ -26,9 +26,9 @@ def load_wallet(w3: Web3, keyfile: Optional[str]):
 class Blockchain:
     """ API for contracts and transactions """
 
-    def __init__(self, rpc: str, id: int, name: str, txn_handler_class: TransactionHandler = TransactionHandler):
+    def __init__(self, rpc: str, id_: int, name: str, txn_handler_class: TransactionHandler = TransactionHandler):
         self.rpc = rpc
-        self.id = id
+        self.id = id_
         self.name = name
         self.w3 = self._connect_web3()
         self.txn_handler = txn_handler_class(self.w3, self.id, 239185)
@@ -58,3 +58,6 @@ class Blockchain:
 
     def read_contract(self, name):
         return self.contract_manager.read_contract(name)
+
+    def __str__(self):
+        return f"{self.name}#{self.id}"

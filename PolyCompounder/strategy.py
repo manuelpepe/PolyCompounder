@@ -22,13 +22,19 @@ __all__ = [
 class CompoundStrategy:
     """ Base class for compound strategies """
     def __init__(self, blockchain: Blockchain, name: str):
-        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger = logging.getLogger(f"{self.__class__.__name__}-{name}")
         self.blockchain = blockchain
         self.name = name
+
+    def compound(self):
+        raise NotImplementedError("Childs of CompoundStrategy must implement 'compound'")
 
     def _transact(self, func: callable, args: tuple):
         res = self.blockchain.transact(func, args)
         time.sleep(2)
+    
+    def __str__(self):
+        return f"{self.name} on {self.blockchain}"
 
 
 class PZAPPoolCompoundStrategy(CompoundStrategy):
@@ -49,13 +55,11 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
 
     def compound(self):
         """ Runs complete compound process """
-        self.logger.info(f"Compounding {self.name}")
         self.print_pending_rewards()
         self.harvest()
         self.swap_half_harvest()
         self.add_liquidity()
         self.stake_liquidity()
-        self.logger.info("Done")
 
     def print_pending_rewards(self):
         pending_amount = self.masterchef.functions.pendingPZap(self.pool_id, self.owner).call()
@@ -116,7 +120,8 @@ class StrategyLoader:
         out = []
         for strat in strategies:
             strat_class = self.find_strat_by_name(strat["strategy"])
-            out.append(strat_class(self.blockchain, strat["name"], **strat["params"]))
+            obj = strat_class(self.blockchain, strat["name"], **strat.get("params", []))
+            out.append(obj)
         return out
 
     def find_strat_by_name(self, name: str):
