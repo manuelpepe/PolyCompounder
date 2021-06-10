@@ -82,7 +82,7 @@ def run(args, logger):
     stratloader = StrategyLoader(blockchain)
     starts = stratloader.load_from_file(STRATEGIES_FILE)
     pounder = Compounder(starts)
-    pounder.run()
+    pounder.start()
 
 
 def parser():
