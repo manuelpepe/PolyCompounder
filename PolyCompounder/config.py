@@ -29,7 +29,7 @@ _EMAIL_CONFIG = _cfg.get("emails")
 
 ALERTS_ON = _EMAIL_CONFIG.get("enabled", False)
 ALERTS_HOST = _EMAIL_CONFIG.get("host", "localhost")
-ALERTS_PORT = _EMAIL_CONFIG.get("port", 465)
+ALERTS_PORT = _EMAIL_CONFIG.get("port", 587)
 ALERTS_ADDRESS = _EMAIL_CONFIG.get("address", None)
 ALERTS_PASSWORD = _EMAIL_CONFIG.get("password", None)
 ALERTS_RECIPIENT = _EMAIL_CONFIG.get("recipient", None)
