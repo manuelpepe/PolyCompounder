@@ -74,7 +74,7 @@ class Compounder:
         except HarvestNotAvailable as err:
             self.logger.warning(err)
             item.schedule_for(err.next_at)
-        except CompoundError as e:
+        except CompoundError as err:
             self._handle_compounderror(item, err)
         except Exception as e:
             self.logger.exception(e)
