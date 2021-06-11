@@ -25,7 +25,7 @@ with CONFIG_FILE.open("r") as fp:
 ENDPOINT = _cfg['endpoint']
 MY_ADDRESS = _cfg['myAddress']
 
-_EMAIL_CONFIG = _cfg.get("emails")
+_EMAIL_CONFIG = _cfg.get("emails", {})
 
 ALERTS_ON = _EMAIL_CONFIG.get("enabled", False)
 ALERTS_HOST = _EMAIL_CONFIG.get("host", "localhost")
