@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from PolyCompounder.exceptions import CompoundError, HarvestNotAvailable
 from PolyCompounder.strategy import CompoundStrategy
 from PolyCompounder.config import DATETIME_FORMAT
-
+from PolyCompounder.alert import alert_exception
 
 class QueuedItemNotReady(Exception):
     pass
@@ -44,6 +44,9 @@ class QueuedItem:
             self.strategy.compound()
             self.logger.info(f"Done with {self.strategy}")
 
+    def __str__(self):
+        return f"QueuedItem#{self.id} for {self.strategy}"
+
 
 class Compounder:
     """ Runs a list of strategies sequentially """
@@ -72,11 +75,16 @@ class Compounder:
             self.logger.warning(err)
             item.schedule_for(err.next_at)
         except CompoundError as e:
-            self.logger.exception(e)
-            raise e
+            self._handle_compounderror(item, err)
         except Exception as e:
             self.logger.exception(e)
             raise e
+
+    def _handle_compounderror(self, item, err):
+        self.logger.exception(err)
+        alert_exception(err)
+        item.schedule_for(QueuedItem.RUN_NEVER)
+        self.logger.warning(f"{item} disabled")
 
     def sleep(self):
         self.logger.debug(f"Sleeping for {self.ITERATION_SLEEP} seconds.")

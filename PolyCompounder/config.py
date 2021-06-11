@@ -3,6 +3,7 @@ from pathlib import Path
 
 from PolyCompounder.exceptions import MissingConfig
 
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 RESOURCES = Path(__file__).parent / "resources"
 ABIS_DIRECTORY = RESOURCES / "abis"
@@ -19,8 +20,16 @@ if not CONFIG_FILE.is_file():
         cfg.write(sample.read())
 
 with CONFIG_FILE.open("r") as fp:
-    cfg = json.load(fp) 
-    ENDPOINT = cfg['endpoint']
-    MY_ADDRESS = cfg['myAddress']
+    _cfg = json.load(fp) 
 
-DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+ENDPOINT = _cfg['endpoint']
+MY_ADDRESS = _cfg['myAddress']
+
+_EMAIL_CONFIG = _cfg.get("emails")
+
+ALERTS_ON = _EMAIL_CONFIG.get("enabled", False)
+ALERTS_HOST = _EMAIL_CONFIG.get("host", "localhost")
+ALERTS_PORT = _EMAIL_CONFIG.get("port", 465)
+ALERTS_ADDRESS = _EMAIL_CONFIG.get("address", None)
+ALERTS_PASSWORD = _EMAIL_CONFIG.get("password", None)
+ALERTS_RECIPIENT = _EMAIL_CONFIG.get("recipient", None)

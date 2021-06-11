@@ -19,6 +19,7 @@ from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.core import Compounder
 from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, DEFAULT_KEYFILE
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
+from PolyCompounder.alert import alert_exception
 
 
 def _create_logger():
@@ -124,6 +125,7 @@ def exception_handler(logger):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
         logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+        alert_exception(exc_value)
     return _handle_exceptions
 
 

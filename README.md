@@ -103,6 +103,24 @@ Strategies are dictionaries with:
 
 Run `polycompound list-strategies -v' to see available strategies and parameters.
 
+### Email alerts
+
+You can setup email alerts for when something goes wrong.
+Add the following to your `resources/config.json`:
+
+```json
+{
+    "emails": {
+        "enabled": true,
+        "host": "smtp.host.com",
+        "port": 465,
+        "address": "email@host.com",
+        "password": "password",
+        "recipient": "me@host.com"
+    }   
+}
+```
+
 
 ## Developing
 

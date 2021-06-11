@@ -1,4 +1,11 @@
 {
     "endpoint": "https://rpc-mainnet.maticvigil.com/v1/your-api",
-    "myAddress": "0xYOUR-WALLET"
+    "myAddress": "0xYOUR-WALLET",
+    "emails": {
+        "enabled": false,
+        "host": "localhost",
+        "address": "",
+        "password": "",
+        "recipient": ""
+    }
 }
