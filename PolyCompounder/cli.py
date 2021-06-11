@@ -117,9 +117,20 @@ def _catch_ctrlc():
         except SystemExit:
             os._exit(1)
 
+
+def exception_handler(logger):
+    def _handle_exceptions(exc_type, exc_value, exc_traceback):
+        if issubclass(exc_type, KeyboardInterrupt):
+            sys.__excepthook__(exc_type, exc_value, exc_traceback)
+            return
+        logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+    return _handle_exceptions
+
+
 def main():
     logger = _create_logger()
     args = parser().parse_args()
+    sys.excepthook = exception_handler(logger)
     if hasattr(args, 'func'):
         with _catch_ctrlc():
             args.func(args, logger)
