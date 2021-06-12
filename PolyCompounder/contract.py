@@ -6,6 +6,7 @@ from web3 import Web3
 
 from PolyCompounder.config import ABIS_DIRECTORY, CONTRACTS_FILE
 
+
 class ContractManager:
     """
     Stores contract definitions (address and location of the abi file).

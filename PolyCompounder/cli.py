@@ -14,12 +14,12 @@ from pathlib import Path
 from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from PolyCompounder.strategy import StrategyLoader
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.core import Compounder
 from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, DEFAULT_KEYFILE
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
 from PolyCompounder.alert import alert_exception
+from PolyCompounder.queue import QueueLoader
 
 
 def _create_logger():
@@ -65,7 +65,7 @@ def edit_config(args, logger):
 def print_strats(args, logger):
     NOSHOW = ["blockchain", "name"]
     logger.info("Available strategies:")
-    for strat in StrategyLoader.list_strats():
+    for strat in QueueLoader.list_strats():
         logger.info(f"* {strat.__name__}{':' if args.verbose else ''}")
         if args.verbose:
             params = inspect.signature(strat).parameters
@@ -75,14 +75,13 @@ def print_strats(args, logger):
                 logger.info(f"\t- {param}")
     if not args.verbose:
         logger.info("use -v to see strategy parameters")
-                
+
 
 def run(args, logger):
     blockchain = Blockchain(ENDPOINT, 137, "POLYGON")
     blockchain.load_wallet(MY_ADDRESS, args.keyfile)
-    stratloader = StrategyLoader(blockchain)
-    starts = stratloader.load_from_file(STRATEGIES_FILE)
-    pounder = Compounder(starts)
+    queue = QueueLoader(blockchain).load(STRATEGIES_FILE)
+    pounder = Compounder(queue)
     pounder.start()
 
 

@@ -7,15 +7,16 @@ from pathlib import Path
 from typing import List
 
 from PolyCompounder.blockchain import Blockchain
-from PolyCompounder.exceptions import HarvestNotAvailable, NoLiquidity, UnkownStrategyError
 from PolyCompounder.config import DATETIME_FORMAT
 from PolyCompounder.utils import *
 
 
 __all__ = [
-    "StrategyLoader",
     "CompoundStrategy",
-    "PZAPPoolCompoundStrategy"
+    "PZAPPoolCompoundStrategy",
+    "RescheduleError",
+    "SpecificTimeRescheduleError",
+    "HarvestNotAvailable"
 ]
 
 
@@ -108,28 +109,29 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
         self._transact(self.masterchef.functions.deposit, (self.pool_id, lps_to_stake))
 
 
-class StrategyLoader:
-    def __init__(self, blockchain):
-        self.blockchain = blockchain
+class CompoundError(Exception):
+    """ Base class for errors while compounding. 
+    Unhandleded CompoundErrors will prevent further excecutions of a strategy. """
+    pass
 
-    def load_from_file(self, path: Path) -> List["CompoundStrategy"]:
-        with open(path, "r") as fp:
-            return self.load_from_list(json.load(fp))
-    
-    def load_from_list(self, strategies: list) -> List["CompoundStrategy"]:
-        out = []
-        for strat in strategies:
-            strat_class = self.find_strat_by_name(strat["strategy"])
-            obj = strat_class(self.blockchain, strat["name"], **strat.get("params", []))
-            out.append(obj)
-        return out
 
-    def find_strat_by_name(self, name: str):
-        for class_ in CompoundStrategy.__subclasses__():
-            if class_.__name__ == name:
-                return class_
-        raise UnkownStrategyError(f"Can't find strategy '{name}'")
+class RescheduleError(CompoundError):
+    """ Strategies can raise this exception to tell the compounder to optionally reschedule them in known scenarios. """
+    pass
 
-    @classmethod
-    def list_strats(cls):
-        return CompoundStrategy.__subclasses__()
+
+class NoLiquidity(RescheduleError):
+    """ No liquidity found at the time. Compounder may retry whenever possible. """ 
+    pass
+
+
+class SpecificTimeRescheduleError(RescheduleError):
+    """ Same as `RescheduleError` but with specific a specific date and time. """
+    def __init__(self, message, next_at = None):
+        super().__init__(message)
+        self.next_at = next_at
+
+
+class HarvestNotAvailable(SpecificTimeRescheduleError): 
+    """ Harvest wasn't available. Should retry when it unlocks. """
+    pass

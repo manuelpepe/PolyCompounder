@@ -1,7 +1,7 @@
 import pytest
 
 from PolyCompounder.exceptions import MissingConfig
-from PolyCompounder.strategy import StrategyLoader, CompoundStrategy
+from PolyCompounder.strategy import CompoundStrategy
 from PolyCompounder.config import RESOURCES, STRATEGIES_FILE
 
 try:
@@ -11,6 +11,7 @@ except MissingConfig as err:
     raise err
 
 from PolyCompounder.blockchain import Blockchain
+from PolyCompounder.queue import QueueLoader
 
 
 @pytest.fixture
@@ -18,9 +19,5 @@ def blockchain():
     return Blockchain(ENDPOINT, 137, "POLYGON")
 
 @pytest.fixture
-def stratloader(blockchain):
-    return StrategyLoader(blockchain)
-
-@pytest.fixture
-def strategies(stratloader: StrategyLoader):
-    return stratloader.load_from_file(STRATEGIES_FILE)
+def queue(blockchain):
+    return QueueLoader(blockchain).load(STRATEGIES_FILE)
