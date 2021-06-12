@@ -1,24 +1,24 @@
-# PolyAutoCompounder
+# PolyCompounder
 
 
 [![Tests](https://github.com/manuelpepe/PolyCompounder/actions/workflows/python-app.yml/badge.svg)](https://github.com/manuelpepe/PolyCompounder/actions/workflows/python-app.yml) 
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 
 Pool Auto Compounder for the Polygon (MATIC) network.
-Currently works for PZAP only.
+
+Currently, the only available strategy was tested in a specific pool in Polyzap, but you should be able to easily extend it to
+other pools, farms, tokens and blockchain networks (see [Configuration](#configuration)).
 
 
 ## DISCLAIMER
 
 This is a side-project, for personal use and learning purposes, and it may fall unmainteined in the future.
 
-Even now I cannot assure completely correct handling of your tokens.
+I cannot assure completely correct handling of your assets.
 
 I'm not assosiated with any of the farms/pools/blockchains mentioned in the project or any other crypto project.
 
-Don't use this with money you're afraid to lose. Maybe don't use it at all.
-
-Read the code, use at your own discretion and always DYOR.
+Read the code, use at your own risk and always DYOR.
 
 
 ## Installation
@@ -104,9 +104,9 @@ Strategies are dictionaries with:
 * `strategy`: Class name of strategy (must be subclass of `PolyCompounder.strategy.CompoundStrategy`, see `polycompound list-strategies`)
 * `name`: Name, just for logging.
 * `params`: Dictionary with strategy parameters. (see `polycompound list-strategies -v`)
-* `repeat_every`: _Optional_ Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.
+* `repeat_every`: _Optional_. Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.
 
-Run `polycompound list-strategies -v' to see available strategies and parameters.
+Run `polycompound list-strategies -v` to see available strategies and parameters.
 
 ### Email alerts
 
