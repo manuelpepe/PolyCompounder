@@ -55,10 +55,11 @@ Create project config and keyfile:
 (venv) $ polycompound create-keyfile
 ```
 
+You can get register at [MaticVigil](https://rpc.maticvigil.com/) for a free RPC account.
 
 ### Adding extra contracts
 
-To use contracts in the strategies compound you first need to add the abi file to `resources/abis` and then
+To use contracts in the strategies you first need to add the abi file to `resources/abis` and 
 modify the `resources/contracts.json` file to load it.
 
 For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `resources/abis/mytoken.abi` and add
@@ -76,7 +77,7 @@ to `resources/contracts.json` the following:
 ### Adding extra strategies
 
 You can add strategies to execute at `resources/strategies.json`.
-For example, the follwing example defines 1 estrategy to execute, using the strategy `PZAPPoolCompoundStrategy` 
+For example, the following example defines 1 estrategy to execute, using the strategy `PZAPPoolCompoundStrategy` 
 and the contracts `PZAP`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
 
 ```json
