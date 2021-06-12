@@ -85,6 +85,9 @@ and the contracts `PZAP`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
     {
         "strategy": "PZAPPoolCompoundStrategy",
         "name": "PZAP-WBTC",
+        "repeat_every": {
+            "days": 1
+        },
         "params": {
             "swap_path": ["PZAP", "WBTC"],
             "pair": "PAIR",
@@ -101,6 +104,7 @@ Strategies are dictionaries with:
 * `strategy`: Class name of strategy (must be subclass of `PolyCompounder.strategy.CompoundStrategy`, see `polycompound list-strategies`)
 * `name`: Name, just for logging.
 * `params`: Dictionary with strategy parameters. (see `polycompound list-strategies -v`)
+* `repeat_every`: _Optional_ Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.
 
 Run `polycompound list-strategies -v' to see available strategies and parameters.
 
