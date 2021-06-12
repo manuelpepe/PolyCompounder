@@ -11,9 +11,14 @@ RANDOM_DELTA = timedelta(days=1)
 RANDOM_DATE = datetime.now() + RANDOM_DELTA
 
 
-class StrategyForTesting(CompoundStrategy):
+class StrategyTestHarvestNotAvailable(CompoundStrategy):
     def compound(self):
         raise HarvestNotAvailable("TEST", RANDOM_DATE.timestamp())
+
+
+class StrategyTestWorks(CompoundStrategy):
+    def compound(self):
+        return True
 
 
 def test_compounder_is_created(queue):
@@ -22,7 +27,7 @@ def test_compounder_is_created(queue):
 
 
 def test_item_runs():
-    strat = StrategyForTesting(None, "Test Strategy")
+    strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
     strat.compound = MagicMock(name="compound")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP)
     compounder = Compounder(Queue([item]))
@@ -32,7 +37,7 @@ def test_item_runs():
 
 
 def test_that_fails_is_rescheduled():
-    strat = StrategyForTesting(None, "Test Strategy")
+    strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP)
     compounder = Compounder(Queue([item]))
     compounder.run()
@@ -46,4 +51,13 @@ def test_that_fails_is_rescheduled():
     compounder.queue[0].schedule_for(int(some_passed_date))
     compounder.run()
     strat.compound.assert_called_once()
-    
+
+
+def test_failed_strategty_reschedules_using_repeat_every():
+    strat = StrategyTestWorks(None, "Test Strategy that works")
+    item = QueueItem(0, strat, QueueItem.RUN_ASAP, repeat_every={"days": 1, "hours": 1})
+    compounder = Compounder(Queue([item]))
+    compounder.run()
+    item_next_exec = datetime.fromtimestamp(compounder.queue[0].next_at)
+    difference_in_time = item_next_exec - datetime.now()
+    assert difference_in_time > timedelta(days=1) and difference_in_time < timedelta(days=1, hours=1, seconds=1)

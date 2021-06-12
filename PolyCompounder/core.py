@@ -32,6 +32,7 @@ class Compounder:
     def process_item(self, item: QueueItem):
         try:
             item.process()
+            self._reschedule_item(item)
         except SpecificTimeRescheduleError as err:
             self.logger.warning(err)
             item.schedule_for(int(err.next_at))

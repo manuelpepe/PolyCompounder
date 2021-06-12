@@ -2,7 +2,7 @@ import json
 import logging
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 
 from PolyCompounder.blockchain import Blockchain
@@ -28,8 +28,8 @@ class QueueItem:
 
     def next_repetition_time(self):
         last = datetime.fromtimestamp(self.last_start)
-        new = last + self.repeat_every
-        return new.timestamp()
+        new = last + timedelta(**self.repeat_every)
+        return int(new.timestamp())
 
     def schedule_for(self, next_at: int):
         if type(next_at) != int:
