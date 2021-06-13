@@ -3,6 +3,33 @@ from pathlib import Path
 
 from PolyCompounder.exceptions import MissingConfig
 
+
+class MissingConfigFile(Exception):
+    pass
+
+
+class JSONConfig:
+    @classmethod
+    def _create_from_cwd_or_default(cls, path: Path):
+        if path.is_file():
+            return JSONConfig(path)
+        raise MissingConfigFile(f"Config not found at '{path}'")
+
+    def __init__(self, path: Path):
+        self.path = path
+        self.data = self._read_data()
+    
+    def _read_data(self):
+        with open(self.path, "r") as fp:
+            return json.load(fp)
+
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def get(self, key, default = None):
+        return self.data.get(key, default)
+
+
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 RESOURCES = Path(__file__).parent / "resources"
@@ -15,17 +42,12 @@ CONTRACTS_FILE = RESOURCES / "contracts.json"
 
 DEFAULT_KEYFILE = RESOURCES / "key.file"
 
-if not CONFIG_FILE.is_file():
-    with CONFIG_FILE.open("w") as cfg, SAMPLE_CONFIG_FILE.open("r") as sample:
-        cfg.write(sample.read())
+APP_CONFIG = JSONConfig("config.json")
 
-with CONFIG_FILE.open("r") as fp:
-    _cfg = json.load(fp) 
+ENDPOINT = APP_CONFIG['endpoint']
+MY_ADDRESS = APP_CONFIG['myAddress']
 
-ENDPOINT = _cfg['endpoint']
-MY_ADDRESS = _cfg['myAddress']
-
-_EMAIL_CONFIG = _cfg.get("emails", {})
+_EMAIL_CONFIG = APP_CONFIG.get("emails", {})
 
 ALERTS_ON = _EMAIL_CONFIG.get("enabled", False)
 ALERTS_HOST = _EMAIL_CONFIG.get("host", "localhost")
