@@ -1,9 +1,10 @@
 import json
 import logging
+import importlib
 
+from typing import Optional, List
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Optional, List
 
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.strategy import CompoundStrategy
@@ -80,8 +81,18 @@ class Queue:
 
 class QueueLoader:
     """ Loads a Queue from raw data """
-    def __init__(self, blockchain: Blockchain):
+    def __init__(self, blockchain: Blockchain, import_local_strategies: bool = True):
         self.blockchain = blockchain
+        self.imported_module = None
+        if import_local_strategies:
+            self.import_local_strategies()
+    
+    def import_local_strategies(self):
+        if not self.imported_module:
+            try:
+                self.imported_module = importlib.import_module("strategies")
+            except ModuleNotFoundError as err:
+                raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD") from err
     
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:
