@@ -8,3 +8,4 @@ venv2/
 .vscode/
 .coverage
 polycompound.log
+.pytest_cache/

@@ -1,3 +1,0 @@
-class MissingConfig(Exception): 
-    pass
-
