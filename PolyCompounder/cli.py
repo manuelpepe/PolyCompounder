@@ -16,7 +16,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.core import Compounder
-from PolyCompounder.config import ENDPOINT, MY_ADDRESS, STRATEGIES_FILE, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, DEFAULT_KEYFILE
+from PolyCompounder.config import ENDPOINT, MY_ADDRESS, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, KEY_FILE
 from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
 from PolyCompounder.alert import alert_exception
 from PolyCompounder.queue import QueueLoader
@@ -80,7 +80,7 @@ def print_strats(args, logger):
 def run(args, logger):
     blockchain = Blockchain(ENDPOINT, 137, "POLYGON")
     blockchain.load_wallet(MY_ADDRESS, args.keyfile)
-    queue = QueueLoader(blockchain).load(STRATEGIES_FILE)
+    queue = QueueLoader(blockchain).load()
     pounder = Compounder(queue)
     pounder.start()
 
@@ -98,7 +98,7 @@ def parser():
     p_run.set_defaults(func=run)
 
     p_createkf = subparsers.add_parser("create-keyfile", help="Create keyfile for compounder. You'll need your private key and a new password for the keyfile.")
-    p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default=str(DEFAULT_KEYFILE))
+    p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default=str(KEY_FILE))
     p_createkf.set_defaults(func=_create_keyfile)
 
     p_edit = subparsers.add_parser("edit-config", help="Create or edit config file.")

@@ -32,17 +32,22 @@ class JSONConfig:
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
-RESOURCES = Path(__file__).parent / "resources"
-ABIS_DIRECTORY = RESOURCES / "abis"
 
-CONFIG_FILE = RESOURCES / "config.json" 
-SAMPLE_CONFIG_FILE = RESOURCES / "config.sample.json" 
-STRATEGIES_FILE = RESOURCES / "strategies.json"
-CONTRACTS_FILE = RESOURCES / "contracts.json"
+# Files and directories
 
-DEFAULT_KEYFILE = RESOURCES / "key.file"
+RESOURCES_DIR = Path("resources")
+SAMPLE_CONFIG_FILE = RESOURCES_DIR / "config.sample.json" 
 
-APP_CONFIG = JSONConfig("config.json")
+ABIS_DIR = Path("abis")
+CONFIG_FILE = Path("config.json")
+TASKS_FILE = Path("tasks.json")
+CONTRACTS_FILE = Path("contracts.json")
+KEY_FILE = Path("key.file")
+
+
+# Load from config file
+
+APP_CONFIG = JSONConfig(CONFIG_FILE)
 
 ENDPOINT = APP_CONFIG['endpoint']
 MY_ADDRESS = APP_CONFIG['myAddress']

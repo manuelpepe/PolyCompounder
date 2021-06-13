@@ -9,12 +9,12 @@ from web3.middleware.geth_poa import geth_poa_middleware
 
 from PolyCompounder.contract import ContractManager
 from PolyCompounder.transaction import TransactionHandler
-from PolyCompounder.config import DEFAULT_KEYFILE
+from PolyCompounder.config import KEY_FILE
 
 
 def load_wallet(w3: Web3, keyfile: Optional[str]):
     if keyfile is None:
-        keyfile = DEFAULT_KEYFILE
+        keyfile = KEY_FILE
     if not isfile(keyfile):
         raise Exception(f"Keyfile at '{keyfile}' not found.")
     with open(keyfile) as fp:

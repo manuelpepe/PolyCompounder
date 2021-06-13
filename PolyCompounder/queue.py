@@ -7,6 +7,7 @@ from typing import Optional, List
 
 from PolyCompounder.blockchain import Blockchain
 from PolyCompounder.strategy import CompoundStrategy
+from PolyCompounder.config import TASKS_FILE
 
 
 class QueueItem:
@@ -82,14 +83,14 @@ class QueueLoader:
     def __init__(self, blockchain: Blockchain):
         self.blockchain = blockchain
     
-    def load(self, path: Path):
-        with open(path, "r") as fp:
-            strategies = json.load(fp)
-            return self._create_queue_from_list(strategies)
+    def load(self):
+        with open(Path.cwd() / TASKS_FILE, "r") as fp:
+            tasks = json.load(fp)
+            return self._create_queue_from_list(tasks)
 
-    def _create_queue_from_list(self, strategies: List[dict]):
+    def _create_queue_from_list(self, tasks: List[dict]):
         out = []
-        for ix, data in enumerate(strategies):
+        for ix, data in enumerate(tasks):
             strat = self._create_strat_from_data(data)
             repeat = data.get("repeat_every", {})
             item = QueueItem(ix, strat, QueueItem.RUN_ASAP, repeat_every=repeat)
