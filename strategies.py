@@ -8,7 +8,6 @@ from pab.utils import *
 from pab.strategy import SpecificTimeRescheduleError, RescheduleError, BaseStrategy
 
 
-
 class HarvestNotAvailable(SpecificTimeRescheduleError): 
     """ Harvest wasn't available. Should retry when it unlocks. """
     pass
@@ -17,7 +16,6 @@ class HarvestNotAvailable(SpecificTimeRescheduleError):
 class NoLiquidity(RescheduleError):
     """ No liquidity found at the time. Compounder may retry whenever possible. """ 
     pass
-
 
 
 class PZAPPoolCompoundStrategy(BaseStrategy):
