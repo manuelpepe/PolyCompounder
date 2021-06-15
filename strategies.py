@@ -5,7 +5,7 @@ from typing import List
 from pab.blockchain import Blockchain
 from pab.config import DATETIME_FORMAT
 from pab.utils import *
-from pab.strategy import SpecificTimeRescheduleError, RescheduleError, CompoundStrategy
+from pab.strategy import SpecificTimeRescheduleError, RescheduleError, BaseStrategy
 
 
 
@@ -20,7 +20,7 @@ class NoLiquidity(RescheduleError):
 
 
 
-class PZAPPoolCompoundStrategy(CompoundStrategy):
+class PZAPPoolCompoundStrategy(BaseStrategy):
     """ Compound strategy for PZAP Pools """
 
     def __init__(self, blockchain: Blockchain, name: str, swap_path: List[str], pair: str, masterchef: str, router: str, pool_id: int):
@@ -36,7 +36,7 @@ class PZAPPoolCompoundStrategy(CompoundStrategy):
     def _get_swap_path(self):
         return [self.tokenA.address, self.tokenB.address]
 
-    def compound(self):
+    def run(self):
         """ Runs complete compound process """
         self.print_pending_rewards()
         self.harvest()
