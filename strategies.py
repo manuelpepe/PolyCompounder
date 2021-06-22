@@ -23,7 +23,7 @@ class NoLiquidity(RescheduleError):
 class PZAPPoolCompoundStrategy(BaseStrategy):
     """ Compound strategy for PZAP Pools """
 
-    def __init__(self, blockchain: Blockchain, name: str, swap_path: List[str], pair: str, masterchef: str, router: str, pool_id: int):
+    def __init__(self, blockchain: Blockchain, name: str, swap_path: List[str], pair: str, masterchef: str, router: str, pool_id: int, retry_asap: bool = False):
         super().__init__(blockchain, name)
         self.owner = blockchain.owner
         self.pool_id = pool_id
@@ -32,6 +32,7 @@ class PZAPPoolCompoundStrategy(BaseStrategy):
         self.tokenA = blockchain.read_contract(swap_path[0])
         self.tokenB = blockchain.read_contract(swap_path[1])
         self.pair = blockchain.read_contract(pair)
+        self.retry_asap = retry_asap
 
     def _get_swap_path(self):
         return [self.tokenA.address, self.tokenB.address]
@@ -52,7 +53,9 @@ class PZAPPoolCompoundStrategy(BaseStrategy):
         if not self._is_harvest_available():
             next_at = self.masterchef.functions.getHarvestUntil(self.pool_id, self.owner).call()
             dt = datetime.fromtimestamp(next_at)
-            raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}", next_at)
+            if self.retry_asap:
+                raise HarvestNotAvailable(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}", next_at)
+            raise RescheduleError(f"Harvest unlocks at: {dt.strftime(DATETIME_FORMAT)}")
         self.logger.info("* Harvesting...")
         self._transact(self.masterchef.functions.deposit, (self.pool_id, 0))
         

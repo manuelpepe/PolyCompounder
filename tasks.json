@@ -7,7 +7,8 @@
             "pair": "PAIR",
             "masterchef": "MASTERCHEF",
             "router": "ROUTER",
-            "pool_id": 11
+            "pool_id": 11,
+            "retry_asap": false
         }
     }
 ]
