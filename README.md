@@ -2,9 +2,9 @@
 
 Pool Auto Compounder for PZAP-WBTC in PolyZap.
 
-This project implemented used [PyAutoBlockchain](https://github.com/manuelpepe/PyAutoBlockchain).
+This project is implemented with [PyAutoBlockchain](https://github.com/manuelpepe/PyAutoBlockchain).
 
-The strategy implemented will:
+The `PZAPPoolCompoundStrategy` strategy will:
 
 * Check if pool rewards can be harvested for PZAP-WBTC
 * Harvest PZAP rewards
