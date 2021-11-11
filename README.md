@@ -2,6 +2,10 @@
 
 Pool Auto Compounder for PZAP-WBTC in PolyZap.
 
+| :exclamation:  PolyZap has shut down since this development. I'm leaving this project public because it serves as reference for compounding pools on other projects and as a [PAB](https://github.com/manuelpepe/PyAutoBlockchain) example  |
+|-----------------------------------------|
+
+
 This project is implemented with [PyAutoBlockchain](https://github.com/manuelpepe/PyAutoBlockchain).
 
 The `PZAPPoolCompoundStrategy` strategy will:
