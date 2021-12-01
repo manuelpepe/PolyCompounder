@@ -8,6 +8,7 @@
             "masterchef": "MASTERCHEF",
             "router": "ROUTER",
             "pool_id": 11,
+            "acc_ix": 0,
             "retry_asap": false
         }
     }

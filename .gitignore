@@ -1,11 +1,15 @@
+## .env* files hold sensitive data.
+#.env*
+
+## If you're using a keyfile, remember that it's probably not safe
+## to commit it to any remote. Keep that in mind if you're using a different name for it.
 key.file
+
+## Probably don't want to version the log
+pab.log
+
+
 __pycache__
-config.json
-venv/
-venv2/
-*.egg-info/
-*dia~
-.vscode/
-.coverage
-polycompound.log
-.pytest_cache/
+.pytest_cache
+.vscode
+venv

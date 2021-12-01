@@ -1,10 +1,9 @@
 # PolyCompounder
 
-Pool Auto Compounder for PZAP-WBTC in PolyZap.
+Automatic liquidity pool compounder for the Polygon Network.
 
-| :exclamation:  PolyZap has shut down since this development. I'm leaving this project public because it serves as reference for compounding pools on other projects and as a [PAB](https://github.com/manuelpepe/PyAutoBlockchain) example  |
+| :exclamation:  THIS IMPLEMENTATION IS NOT MEANT TO BE USED. It has not been properly tested. This only serves as a [PAB](https://github.com/manuelpepe/PyAutoBlockchain) project example. |
 |-----------------------------------------|
-
 
 This project is implemented with [PyAutoBlockchain](https://github.com/manuelpepe/PyAutoBlockchain).
 
@@ -16,33 +15,9 @@ The `PZAPPoolCompoundStrategy` strategy will:
 * Create PZAP-WBTC LP tokens
 * Stake the new LP tokens
 
-## DISCLAIMER
-
-This is implementation serves as an example only.
-
-I'm not assosiated with any of the farms/pools/blockchains mentioned in the project or any other crypto project.
-
-Read the code, use at your own risk and always DYOR.
-
 
 ## Usage
 
-Clone and setup virtualenv:
-```
-$ git clone https://github.com/manuelpepe/PolyCompounder
-$ cd PolyCompounder/
-$ python3.9 -m venv venv
-$ source venv/bin/activate
-(venv) $ pip install -r requirements.txt
-```
+This is not meant to be used, only serves as an example.
 
-Create configs:
-```
-(venv) $ pab edit-config
-(venv) $ pab create-keyfile
-```
-
-Run:
-```
-(venv) $ pab run
-```
+For info on how to run a PAB project see [PAB's README](https://github.com/manuelpepe/PyAutoBlockchain/blob/master/README.md)

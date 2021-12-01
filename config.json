@@ -1,0 +1,18 @@
+{
+    "blockchain": "POLYGON",
+    "chainId": 137,
+    "transactions": {
+        "timeout": 300,
+        "gasPrice": {
+            "number": "4",
+            "unit": "gwei"
+        },
+        "gas": {
+            "useEstimate": false,
+            "exact": 250000
+        }
+    },
+    "emails": {
+        "enabled": true
+    }   
+}
